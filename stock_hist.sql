@@ -11,14 +11,21 @@ create table stock_hist(
     amplitude float,
     change_percent float,
     change float,
-    turnover_rate float,
-    ma5 float,
-    ma13 float,
-    ma21 float,
-    ma34 float,
-    ma55 float,
-    ma89 float,
-    ma144 float,
-    ma233 float,
-    czsczb int
+    turnover_rate float
+)
+
+create table industry_hist(
+    id serial primary key,
+    symbol text,
+    trade_date date,
+    open float,
+    close float,
+    high float,
+    low float,
+    volume int,
+    turnover float,
+    amplitude float,
+    change_percent float,
+    change float,
+    turnover_rate float
 )
