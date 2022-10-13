@@ -36,7 +36,7 @@ def download_and_insert(symbol, latest_trade_date, conn):
                                             period="daily",
                                             start_date=start_date_str,
                                             end_date=today_str,
-                                            adjust="hfq")
+                                            adjust="qfq")
 
     if len(stock_zh_a_hist_df.index != 0):
         stock_zh_a_hist_df.rename(columns={'日期': 'trade_date',

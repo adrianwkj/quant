@@ -45,6 +45,8 @@ if __name__ == '__main__':
     up = np.where(bid_ask['bid_ask'] == "v", bid_ask['high'], np.nan)
     down = np.where(bid_ask['bid_ask'] == "^", bid_ask['low'], np.nan)
 
+
+
     # print(data.head)
 
     # 设置基本参数
@@ -104,10 +106,24 @@ if __name__ == '__main__':
     mpl.rcParams['lines.linewidth'] = .5
 
     # 添加买卖点
-    apds=[
-        mpf.make_addplot(up, type='scatter', markersize=100, marker='v', color='g'),
-        mpf.make_addplot(down, type='scatter', markersize=100, marker='^', color='r')
-    ]
+    if False in np.isnan(up):
+        if False in np.isnan(down):
+            apds = [
+                mpf.make_addplot(up, type='scatter', markersize=100, marker='v', color='g'),
+                mpf.make_addplot(down, type='scatter', markersize=100, marker='^', color='r')
+            ]
+        else:
+            apds = [
+                mpf.make_addplot(up, type='scatter', markersize=100, marker='v', color='g')
+            ]
+    else:
+        if False in np.isnan(down):
+            apds = [
+                mpf.make_addplot(down, type='scatter', markersize=100, marker='^', color='r'),
+            ]
+        else:
+            apds = []
+
 
     # 图形绘制
     # show_nontrading:是否显示非交易日，默认False
@@ -126,7 +142,8 @@ if __name__ == '__main__':
              ),
              addplot=apds,
              style=s,
-             show_nontrading=False)
+             show_nontrading=False,
+             savefig='/Users/jason/Downloads/dra.png')
 
 
 

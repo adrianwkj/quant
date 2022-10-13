@@ -35,7 +35,7 @@ def download_and_insert(symbol, latest_trade_date, conn):
     stock_board_industry_hist_em_df = ak.stock_board_industry_hist_em(symbol=symbol,
                                                                       start_date=start_date_str,
                                                                       end_date=today_str,
-                                                                      adjust="hfq")
+                                                                      adjust="qfq")
 
     if len(stock_board_industry_hist_em_df.index != 0):
         stock_board_industry_hist_em_df.rename(columns={'日期': 'trade_date',
