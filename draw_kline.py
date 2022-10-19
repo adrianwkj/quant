@@ -142,9 +142,9 @@ if __name__ == '__main__':
              ),
              addplot=apds,
              style=s,
-             show_nontrading=False,
-             savefig='/Users/jason/Downloads/dra.png')
+             show_nontrading=False)
+             # savefig='/Users/jason/Downloads/' + symbol + '.png')
 
 
 
-    # mpf.show()
+    mpf.show()
