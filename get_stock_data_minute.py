@@ -8,6 +8,7 @@ import akshare as ak
 import pandas as pd
 import datetime
 from sqlalchemy import create_engine
+from pandarallel import pandarallel
 
 
 def stock_list():
@@ -25,12 +26,13 @@ def download_and_insert(symbol, period, latest_trade_datetime, conn):
     start_date = (today - datetime.timedelta(days=5))
 
     if latest_trade_datetime is not None:
-        if latest_trade_datetime >= today:
+        if latest_trade_datetime.date() >= today:
             return 0
         else:
             start_date = (latest_trade_datetime + datetime.timedelta(days=1))
 
     start_date_str = start_date.strftime("%Y-%m-%d %H:%M:%S")
+    print(symbol)
 
     stock_zh_a_hist_min_df = ak.stock_zh_a_hist_min_em(symbol=symbol,
                                                        period=period,
@@ -61,6 +63,7 @@ def download_and_insert(symbol, period, latest_trade_datetime, conn):
 
 
 if __name__ == '__main__':
+    pandarallel.initialize(nb_workers=4)
     conn = create_engine('postgresql+psycopg2://postgres:postgrespw@localhost:55000/stock')
 
     period = '1'
@@ -76,6 +79,7 @@ if __name__ == '__main__':
     final_sl = sl.join(current_sl, on='symbol', how='left')
     final_sl['symbol'] = final_sl.index
     final_sl = final_sl.where(final_sl.notnull(), None)
-    final_sl.apply(lambda x: download_and_insert(x['symbol'], period, x['trade_datetime'], conn), axis=1)
+    # final_sl.apply(lambda x: download_and_insert(x['symbol'], period, x['trade_datetime'], conn), axis=1)
+    final_sl.parallel_apply(lambda x: download_and_insert(x['symbol'], period, x['trade_datetime'], conn), axis=1)
 
     print("Get Data Success!")

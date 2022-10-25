@@ -8,6 +8,7 @@ import akshare as ak
 import pandas as pd
 import datetime
 from sqlalchemy import create_engine
+from pandarallel import pandarallel
 
 
 def stock_list():
@@ -16,7 +17,8 @@ def stock_list():
     return stock_zh_a_spot_em_df[['symbol']]
 
 
-def download_and_insert(symbol, latest_trade_date, conn):
+def download_and_insert(symbol, latest_trade_date, conn_str):
+    conn = create_engine(conn_str)
     now = datetime.datetime.now()
     today = datetime.date.today()
     if now.hour <= 16:
@@ -55,11 +57,14 @@ def download_and_insert(symbol, latest_trade_date, conn):
         stock_zh_a_hist_df.insert(loc=1, column='symbol', value=symbol)
         stock_zh_a_hist_df.to_sql(name='stock_hist', con=conn, index=False, if_exists='append')
         print("symbol: " + symbol + " " + today_str + " inserted!")
+        conn.dispose()
         return 1
 
 
 if __name__ == '__main__':
-    conn = create_engine('postgresql+psycopg2://postgres:postgrespw@localhost:55000/stock')
+    pandarallel.initialize(nb_workers=4)
+    conn_str = 'postgresql+psycopg2://postgres:postgrespw@localhost:55003/stock'
+    conn = create_engine(conn_str)
 
     sl = stock_list()
     sl.set_index('symbol', inplace=True)
@@ -70,6 +75,6 @@ if __name__ == '__main__':
     final_sl = sl.join(current_sl, on='symbol', how='left')
     final_sl['symbol'] = final_sl.index
     final_sl = final_sl.where(final_sl.notnull(), None)
-    final_sl.apply(lambda x: download_and_insert(x['symbol'], x['trade_date'], conn), axis=1)
+    final_sl.parallel_apply(lambda x: download_and_insert(x['symbol'], x['trade_date'], conn_str), axis=1)
 
     print("Get Data Success!")
