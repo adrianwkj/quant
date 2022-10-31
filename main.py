@@ -46,5 +46,6 @@ if __name__ == '__main__':
             [x['ma5'], x['ma13'], x['ma21'], x['ma34'], x['ma55'], x['ma89'], x['ma144'], x['ma233']], x['close']),
                         axis=1)
         mm[name] = b.tail(1).values[0]
-    print(mm)
+        mm1 = sorted(mm.items(), key=lambda x: x[1])
+    print(mm1)
 

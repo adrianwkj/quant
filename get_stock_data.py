@@ -62,8 +62,8 @@ def download_and_insert(symbol, latest_trade_date, conn_str):
 
 
 if __name__ == '__main__':
-    pandarallel.initialize(nb_workers=4)
-    conn_str = 'postgresql+psycopg2://postgres:postgrespw@localhost:55003/stock'
+    pandarallel.initialize(nb_workers=6)
+    conn_str = 'postgresql+psycopg2://postgres:postgrespw@localhost:55000/stock'
     conn = create_engine(conn_str)
 
     sl = stock_list()
